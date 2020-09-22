@@ -1,3 +1,3 @@
-# rustsock
+# sctpx
 
-UDP/SCTP utils ... for rust.
+SCTP utils for rust.
