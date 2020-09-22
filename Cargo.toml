@@ -1,5 +1,5 @@
 [package]
-name = "rustsock"
+name = "sctpx"
 version = "0.1.0"
 authors = ["FanHui <hui.fan@mail.ru>"]
 edition = "2018"
