@@ -10,7 +10,7 @@ release:
 	cargo build --release
 
 test:
-	cargo test
+	cargo test -- --nocapture --test-threads=1
 
 fmt:
 	bash ./tools/fmt.sh

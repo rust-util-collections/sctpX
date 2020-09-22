@@ -31,6 +31,7 @@ mod test {
 
         let buf = &mut [0; 8];
         let res = pnk!(cli.recvfrom(buf));
+        assert_eq!(b"DEF", &buf[0..res.0]);
         assert_eq!(res.0, 3);
         assert_eq!(pnk!(res.1).to_string().as_str(), ADDR);
     }

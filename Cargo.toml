@@ -1,13 +1,19 @@
 [package]
 name = "sctpx"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["FanHui <hui.fan@mail.ru>"]
 edition = "2018"
+description = "A simple and friendly SCTP wrapper."
+keywords = ["sctp", "socket", "net"]
+categories = ["network-programming"]
+license = "MIT"
+homepage = "https://gitee.com/kt10/sctpx"
+repository = "https://gitee.com/kt10/sctpx.git"
 
 [dependencies]
 nix = "0.18"
 libc = "0.2"
-myutil = { git = "https://gitee.com/kt10/myutil", branch = "master" }
+myutil = "0.2"
 
 [features]
 default = ["client", "server"]
