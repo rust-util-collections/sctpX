@@ -1,0 +1,15 @@
+[package]
+name = "rustsock"
+version = "0.1.0"
+authors = ["FanHui <hui.fan@mail.ru>"]
+edition = "2018"
+
+[dependencies]
+nix = "0.18"
+libc = "0.2"
+myutil = { git = "https://gitee.com/kt10/myutil", branch = "master" }
+
+[features]
+default = ["client", "server"]
+client = []
+server = []
