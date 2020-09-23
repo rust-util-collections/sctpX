@@ -13,7 +13,7 @@ repository = "https://gitee.com/kt10/sctpx.git"
 [dependencies]
 nix = "0.18"
 libc = "0.2"
-myutil = "0.2"
+myutil = { git = "https://gitee.com/kt10/myutil", branch = "master" }
 
 [features]
 default = ["client", "server"]

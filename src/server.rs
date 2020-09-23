@@ -63,10 +63,10 @@ impl PeerAddr {
 }
 
 /// Will block the current thread
-/// -@addr: server at this address
-/// -@data_bs: the max size of one message
-/// -@cb: callback to deal with every message
-/// -@keep_alive: enable this will get the effect like TCP-keepalive
+/// - @addr: server at this address
+/// - @data_bs: the max size of one message
+/// - @cb: callback to deal with every message
+/// - @keep_alive: enable this will get the effect like TCP-keepalive
 pub fn start_server(
     addr: &str,
     data_bs: Option<usize>,
@@ -76,8 +76,8 @@ pub fn start_server(
     let mut siz = data_bs.unwrap_or(4096);
     alt!(siz > DATA_BUF_SIZE_LIMIT, siz = DATA_BUF_SIZE_LIMIT);
 
-    let hdr = gen_hdr(addr, 64 * siz, keep_alive).c(d!())?;
-    let mut buf = vec![0; siz];
+    let hdr = gen_hdr(addr, 256 * siz, keep_alive).c(d!())?;
+    let mut buf = vec![0; siz].into_boxed_slice();
     loop {
         if let Ok((size, Some(peer))) = info!(hdr.recvfrom(&mut buf)) {
             info_omit!(cb(&buf[0..size], Arc::clone(&hdr), PeerAddr::new(peer)));
