@@ -7,7 +7,8 @@
 use myutil::{err::*, *};
 use nix::{
     sys::socket::{
-        recvfrom, sendto, socket, AddressFamily, InetAddr, MsgFlags, SockAddr, SockFlag, SockType,
+        recvfrom, sendto, socket, AddressFamily, InetAddr, MsgFlags, SockAddr,
+        SockFlag, SockType,
     },
     unistd::close,
 };
@@ -35,7 +36,11 @@ impl Hdr {
 
     /// sendmsg to server
     #[inline(always)]
-    pub fn sendto_straddr(&self, data: &[u8], server_addr: &str) -> Result<usize> {
+    pub fn sendto_straddr(
+        &self,
+        data: &[u8],
+        server_addr: &str,
+    ) -> Result<usize> {
         server_addr
             .parse::<SocketAddr>()
             .c(d!())
@@ -44,14 +49,21 @@ impl Hdr {
 
     /// sendmsg to server
     #[inline(always)]
-    pub fn sendto(&self, data: &[u8], server_addr: SocketAddr) -> Result<usize> {
+    pub fn sendto(
+        &self,
+        data: &[u8],
+        server_addr: SocketAddr,
+    ) -> Result<usize> {
         let peeraddr = SockAddr::new_inet(InetAddr::from_std(&server_addr));
         sendto(self.fd, data, &peeraddr, MsgFlags::empty()).c(d!())
     }
 
     /// recvmsg from server
     #[inline(always)]
-    pub fn recvfrom(&self, data: &mut [u8]) -> Result<(usize, Option<SockAddr>)> {
+    pub fn recvfrom(
+        &self,
+        data: &mut [u8],
+    ) -> Result<(usize, Option<SockAddr>)> {
         recvfrom(self.fd, data).c(d!())
     }
 }

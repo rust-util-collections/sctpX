@@ -13,4 +13,4 @@ test:
 	cargo test -- --nocapture --test-threads=1
 
 fmt:
-	bash ./tools/fmt.sh
+	@ bash ./tools/fmt.sh

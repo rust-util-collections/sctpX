@@ -7,8 +7,8 @@
 use myutil::{err::*, *};
 use nix::{
     sys::socket::{
-        bind, listen, recvfrom, sendto, setsockopt, socket, sockopt, AddressFamily, InetAddr,
-        MsgFlags, SockAddr, SockFlag, SockType,
+        bind, listen, recvfrom, sendto, setsockopt, socket, sockopt,
+        AddressFamily, InetAddr, MsgFlags, SockAddr, SockFlag, SockType,
     },
     unistd::close,
 };
@@ -80,7 +80,11 @@ pub fn start_server(
     let mut buf = vec![0; siz].into_boxed_slice();
     loop {
         if let Ok((size, Some(peer))) = info!(hdr.recvfrom(&mut buf)) {
-            info_omit!(cb(&buf[0..size], Arc::clone(&hdr), PeerAddr::new(peer)));
+            info_omit!(cb(
+                &buf[0..size],
+                Arc::clone(&hdr),
+                PeerAddr::new(peer)
+            ));
         }
     }
 }
@@ -89,7 +93,8 @@ pub fn start_server(
 // -@recv_bs: max size of system-buffer for sctp recv-queue
 // -@keep_alive: enable this will get the effect like TCP-keepalive
 fn gen_hdr(addr: &str, recv_bs: usize, keep_alive: bool) -> Result<Arc<Hdr>> {
-    let recv_bs = alt!(recv_bs > RECV_BUF_SIZE_LIMIT, RECV_BUF_SIZE_LIMIT, recv_bs);
+    let recv_bs =
+        alt!(recv_bs > RECV_BUF_SIZE_LIMIT, RECV_BUF_SIZE_LIMIT, recv_bs);
 
     let fd = socket(
         AddressFamily::Inet,

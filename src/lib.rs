@@ -16,7 +16,10 @@ mod test {
         const ADDR: &str = "127.0.0.1:9999";
 
         thread::spawn(|| {
-            let cb = |recvd: &[u8], hdr: Arc<server::Hdr>, peer: server::PeerAddr| -> Result<()> {
+            let cb = |recvd: &[u8],
+                      hdr: Arc<server::Hdr>,
+                      peer: server::PeerAddr|
+             -> Result<()> {
                 assert_eq!(b"ABC", recvd);
                 hdr.sendto(b"DEF", &peer).map(|n| assert_eq!(n, 3)).c(d!())
             };
