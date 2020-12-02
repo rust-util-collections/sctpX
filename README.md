@@ -1,6 +1,6 @@
 # SCTPx
 
-**A friendly rust-library for Coding with SCTP protocol.**
+**A friendly rust-library for coding with `SCTP` protocol.**
 
 ## Example
 
