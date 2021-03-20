@@ -4,7 +4,6 @@
 
 #![warn(missing_docs, unused_import_braces, unused_extern_crates)]
 
-use myutil::{err::*, *};
 use nix::{
     sys::socket::{
         recvfrom, sendto, socket, AddressFamily, InetAddr, MsgFlags, SockAddr,
@@ -12,6 +11,7 @@ use nix::{
     },
     unistd::close,
 };
+use ruc::*;
 use std::{net::SocketAddr, os::unix::io::RawFd};
 
 /// SCTP handler
@@ -70,6 +70,6 @@ impl Hdr {
 
 impl Drop for Hdr {
     fn drop(&mut self) {
-        info_omit!(close(self.fd));
+        ruc::info_omit!(close(self.fd));
     }
 }

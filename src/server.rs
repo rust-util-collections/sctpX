@@ -4,7 +4,6 @@
 
 #![warn(missing_docs, unused_import_braces, unused_extern_crates)]
 
-use myutil::{err::*, *};
 use nix::{
     sys::socket::{
         bind, listen, recvfrom, sendto, setsockopt, socket, sockopt,
@@ -12,6 +11,7 @@ use nix::{
     },
     unistd::close,
 };
+use ruc::*;
 use std::{mem, net::SocketAddr, os::unix::io::RawFd, sync::Arc};
 
 const DATA_BUF_SIZE_LIMIT: usize = 8 * 1024 * 1024;
@@ -45,7 +45,7 @@ impl Hdr {
 
 impl Drop for Hdr {
     fn drop(&mut self) {
-        info_omit!(close(self.fd));
+        ruc::info_omit!(close(self.fd));
     }
 }
 
@@ -136,7 +136,7 @@ fn disable_sctp_autoclose(fd: RawFd) -> Result<()> {
             mem::size_of::<libc::c_int>() as libc::socklen_t,
         )
     } {
-        return Err(eg!("Fail to disable 'SCTP_AUTOCLOSE' !!!"));
+        return Err(ruc::eg!("Fail to disable 'SCTP_AUTOCLOSE' !!!"));
     }
 
     Ok(())

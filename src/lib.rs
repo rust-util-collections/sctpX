@@ -8,7 +8,7 @@ pub mod server;
 #[cfg(test)]
 mod test {
     use super::{client, server};
-    use myutil::{err::*, *};
+    use ruc::*;
     use std::{sync::Arc, thread, time::Duration};
 
     #[test]
