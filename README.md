@@ -6,7 +6,7 @@
 
 ```rust
 use sctpx::{client, server};
-use myutil::{err::*, *};
+use ruc::{err::*, *};
 use std::{sync::Arc, thread, time::Duration};
 
 const ADDR: &str = "127.0.0.1:9999";
