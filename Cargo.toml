@@ -1,19 +1,19 @@
 [package]
 name = "sctpx"
-version = "0.1.5"
+version = "0.1.6"
 authors = ["FanHui <hui.fan@mail.ru>"]
-edition = "2018"
+edition = "2021"
 description = "A simple and friendly SCTP wrapper."
 keywords = ["sctp", "socket", "net"]
 categories = ["network-programming"]
 license = "MIT"
-homepage = "https://gitee.com/kt10/sctpx"
-repository = "https://gitee.com/kt10/sctpx.git"
+homepage = "https://github.com/rust-util-collections/sctpx"
+repository = "https://github.com/rust-util-collections/sctpx.git"
 
 [dependencies]
-nix = "0.18"
+nix = "0.23"
 libc = "0.2"
-ruc = { git = "https://gitee.com/kt10/ruc" , branch = "master" }
+ruc = "1.0"
 
 [features]
 default = ["client", "server"]
