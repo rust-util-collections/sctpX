@@ -1,6 +1,6 @@
 [package]
 name = "sctpx"
-version = "0.1.6"
+version = "0.2.0"
 authors = ["FanHui <hui.fan@mail.ru>"]
 edition = "2021"
 description = "A simple and friendly SCTP wrapper."
@@ -11,9 +11,9 @@ homepage = "https://github.com/rust-util-collections/sctpx"
 repository = "https://github.com/rust-util-collections/sctpx.git"
 
 [dependencies]
-nix = "0.23"
+nix = "0.26.1"
 libc = "0.2"
-ruc = "1.0"
+ruc = "3.0.1"
 
 [features]
 default = ["client", "server"]
