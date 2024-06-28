@@ -6,18 +6,21 @@
 
 use nix::{
     sys::socket::{
-        recvfrom, sendto, socket, AddressFamily, InetAddr, MsgFlags, SockAddr,
-        SockFlag, SockType,
+        recvfrom, sendto, socket, AddressFamily, MsgFlags, SockFlag, SockType,
+        SockaddrStorage,
     },
     unistd::close,
 };
 use ruc::*;
-use std::{net::SocketAddr, os::unix::io::RawFd};
+use std::{
+    net::SocketAddr,
+    os::{fd::AsRawFd, unix::io::OwnedFd},
+};
 
 /// SCTP handler
-#[derive(Debug, Eq, Hash, PartialEq)]
+#[derive(Debug)]
 pub struct Hdr {
-    fd: RawFd,
+    fd: OwnedFd,
 }
 
 impl Hdr {
@@ -54,8 +57,13 @@ impl Hdr {
         data: &[u8],
         server_addr: SocketAddr,
     ) -> Result<usize> {
-        let peeraddr = SockAddr::new_inet(InetAddr::from_std(&server_addr));
-        sendto(self.fd, data, &peeraddr, MsgFlags::empty()).c(d!())
+        sendto(
+            self.fd.as_raw_fd(),
+            data,
+            &SockaddrStorage::from(server_addr),
+            MsgFlags::empty(),
+        )
+        .c(d!())
     }
 
     /// recvmsg from server
@@ -63,13 +71,13 @@ impl Hdr {
     pub fn recvfrom(
         &self,
         data: &mut [u8],
-    ) -> Result<(usize, Option<SockAddr>)> {
-        recvfrom(self.fd, data).c(d!())
+    ) -> Result<(usize, Option<SockaddrStorage>)> {
+        recvfrom(self.fd.as_raw_fd(), data).c(d!())
     }
 }
 
 impl Drop for Hdr {
     fn drop(&mut self) {
-        ruc::info_omit!(close(self.fd));
+        ruc::info_omit!(close(self.fd.as_raw_fd()));
     }
 }

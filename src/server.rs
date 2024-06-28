@@ -7,25 +7,33 @@
 use nix::{
     sys::socket::{
         bind, listen, recvfrom, sendto, setsockopt, socket, sockopt,
-        AddressFamily, InetAddr, MsgFlags, SockAddr, SockFlag, SockType,
+        AddressFamily, Backlog, MsgFlags, SockFlag, SockType, SockaddrStorage,
     },
     unistd::close,
 };
 use ruc::*;
-use std::{mem, net::SocketAddr, os::unix::io::RawFd, sync::Arc};
+use std::{
+    mem,
+    net::SocketAddr,
+    os::{
+        fd::AsRawFd,
+        unix::io::{OwnedFd, RawFd},
+    },
+    sync::Arc,
+};
 
 const DATA_BUF_SIZE_LIMIT: usize = 8 * 1024 * 1024;
 const RECV_BUF_SIZE_LIMIT: usize = 64 * 1024 * 1024;
 
 /// SCTP handler
-#[derive(Debug, Eq, Hash, PartialEq)]
+#[derive(Debug)]
 pub struct Hdr {
-    fd: RawFd,
+    fd: OwnedFd,
 }
 
 impl Hdr {
     #[inline(always)]
-    fn new(fd: RawFd) -> Hdr {
+    fn new(fd: OwnedFd) -> Hdr {
         Hdr { fd }
     }
 
@@ -33,31 +41,35 @@ impl Hdr {
     /// 回调函数可以按需向对端回复消息
     #[inline(always)]
     pub fn sendto(&self, data: &[u8], peeraddr: &PeerAddr) -> Result<usize> {
-        sendto(self.fd, data, &peeraddr.addr, MsgFlags::empty()).c(d!())
+        sendto(self.fd.as_raw_fd(), data, &peeraddr.addr, MsgFlags::empty())
+            .c(d!())
     }
 
     // 接收消息端口必须私有
     #[inline(always)]
-    fn recvfrom(&self, data: &mut [u8]) -> Result<(usize, Option<SockAddr>)> {
-        recvfrom(self.fd, data).c(d!())
+    fn recvfrom(
+        &self,
+        data: &mut [u8],
+    ) -> Result<(usize, Option<SockaddrStorage>)> {
+        recvfrom(self.fd.as_raw_fd(), data).c(d!())
     }
 }
 
 impl Drop for Hdr {
     fn drop(&mut self) {
-        ruc::info_omit!(close(self.fd));
+        ruc::info_omit!(close(self.fd.as_raw_fd()));
     }
 }
 
 /// 客户端地址
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub struct PeerAddr {
-    addr: SockAddr,
+    addr: SockaddrStorage,
 }
 
 impl PeerAddr {
     #[inline(always)]
-    fn new(addr: SockAddr) -> Self {
+    fn new(addr: SockaddrStorage) -> Self {
         PeerAddr { addr }
     }
 }
@@ -105,18 +117,18 @@ fn gen_hdr(addr: &str, recv_bs: usize, keep_alive: bool) -> Result<Arc<Hdr>> {
     .c(d!())?;
 
     if keep_alive {
-        disable_sctp_autoclose(fd).c(d!())?;
+        disable_sctp_autoclose(fd.as_raw_fd()).c(d!())?;
     }
 
-    setsockopt(fd, sockopt::ReuseAddr, &true).c(d!())?;
-    setsockopt(fd, sockopt::ReusePort, &true).c(d!())?;
-    setsockopt(fd, sockopt::RcvBuf, &recv_bs).c(d!())?;
+    setsockopt(&fd, sockopt::ReuseAddr, &true).c(d!())?;
+    setsockopt(&fd, sockopt::ReusePort, &true).c(d!())?;
+    setsockopt(&fd, sockopt::RcvBuf, &recv_bs).c(d!())?;
 
     addr.parse::<SocketAddr>()
         .c(d!())
-        .map(|addr| SockAddr::new_inet(InetAddr::from_std(&addr)))
-        .and_then(|addr| bind(fd, &addr).c(d!()))
-        .and_then(|_| listen(fd, 6).c(d!()))
+        .map(SockaddrStorage::from)
+        .and_then(|addr| bind(fd.as_raw_fd(), &addr).c(d!()))
+        .and_then(|_| listen(&fd, Backlog::new(6).unwrap()).c(d!()))
         .map(|_| Arc::new(Hdr::new(fd)))
 }
 
