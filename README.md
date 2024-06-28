@@ -2,6 +2,11 @@
 
 **A friendly rust-library for coding with `SCTP` protocol.**
 
+**NOTE**
+
+You should enable the system-level `sctp` supports first, a kernel config example on linux-6.6.30:
+![](doc/sctp_kernel_config.png)
+
 ## Example
 
 ```rust
