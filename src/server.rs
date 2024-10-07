@@ -6,8 +6,8 @@
 
 use nix::{
     sys::socket::{
-        bind, listen, recvfrom, sendto, setsockopt, socket, sockopt,
-        AddressFamily, Backlog, MsgFlags, SockFlag, SockType, SockaddrStorage,
+        bind, listen, recvfrom, sendto, setsockopt, socket, sockopt, AddressFamily,
+        Backlog, MsgFlags, SockFlag, SockType, SockaddrStorage,
     },
     unistd::close,
 };
@@ -41,16 +41,12 @@ impl Hdr {
     /// 回调函数可以按需向对端回复消息
     #[inline(always)]
     pub fn sendto(&self, data: &[u8], peeraddr: &PeerAddr) -> Result<usize> {
-        sendto(self.fd.as_raw_fd(), data, &peeraddr.addr, MsgFlags::empty())
-            .c(d!())
+        sendto(self.fd.as_raw_fd(), data, &peeraddr.addr, MsgFlags::empty()).c(d!())
     }
 
     // 接收消息端口必须私有
     #[inline(always)]
-    fn recvfrom(
-        &self,
-        data: &mut [u8],
-    ) -> Result<(usize, Option<SockaddrStorage>)> {
+    fn recvfrom(&self, data: &mut [u8]) -> Result<(usize, Option<SockaddrStorage>)> {
         recvfrom(self.fd.as_raw_fd(), data).c(d!())
     }
 }
@@ -92,11 +88,7 @@ pub fn start_server(
     let mut buf = vec![0; siz].into_boxed_slice();
     loop {
         if let Ok((size, Some(peer))) = info!(hdr.recvfrom(&mut buf)) {
-            info_omit!(cb(
-                &buf[0..size],
-                Arc::clone(&hdr),
-                PeerAddr::new(peer)
-            ));
+            info_omit!(cb(&buf[0..size], Arc::clone(&hdr), PeerAddr::new(peer)));
         }
     }
 }
@@ -105,8 +97,7 @@ pub fn start_server(
 // -@recv_bs: max size of system-buffer for sctp recv-queue
 // -@keep_alive: enable this will get the effect like TCP-keepalive
 fn gen_hdr(addr: &str, recv_bs: usize, keep_alive: bool) -> Result<Arc<Hdr>> {
-    let recv_bs =
-        alt!(recv_bs > RECV_BUF_SIZE_LIMIT, RECV_BUF_SIZE_LIMIT, recv_bs);
+    let recv_bs = alt!(recv_bs > RECV_BUF_SIZE_LIMIT, RECV_BUF_SIZE_LIMIT, recv_bs);
 
     let fd = socket(
         AddressFamily::Inet,

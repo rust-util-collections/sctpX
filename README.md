@@ -1,3 +1,9 @@
+![GitHub top language](https://img.shields.io/github/languages/top/rust-util-collections/sctpx)
+[![Latest Version](https://img.shields.io/crates/v/sctpx.svg)](https://crates.io/crates/sctpx)
+[![Rust Documentation](https://img.shields.io/badge/api-rustdoc-blue.svg)](https://docs.rs/sctpx)
+[![Rust](https://github.com/rust-util-collections/sctpx/actions/workflows/rust.yml/badge.svg)](https://github.com/rust-util-collections/sctpx/actions/workflows/rust.yml)
+[![Minimum rustc version](https://img.shields.io/badge/rustc-1.81+-lightgray.svg)](https://github.com/rust-random/rand#rust-version-requirements)
+
 # SCTPx
 
 **A friendly rust-library for coding with `SCTP` protocol.**
