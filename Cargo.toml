@@ -11,7 +11,7 @@ homepage = "https://github.com/rust-util-collections/sctpx"
 repository = "https://github.com/rust-util-collections/sctpx.git"
 
 [dependencies]
-nix = { version = "0.29", features = ["net"] }
+nix = { version = "0.30", features = ["net"] }
 libc = "0.2"
 ruc = "7.0"
 
