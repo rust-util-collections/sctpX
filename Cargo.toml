@@ -13,7 +13,7 @@ repository = "https://github.com/rust-util-collections/sctpx.git"
 [dependencies]
 nix = { version = "0.30", features = ["net"] }
 libc = "0.2"
-ruc = "9.0"
+ruc = "10.0"
 
 [features]
 default = ["client", "server"]
